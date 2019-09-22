@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class CreditsText : MonoBehaviour
+public class LevelChoice3Text : MonoBehaviour
 {
     private TextMeshProUGUI text;
-    public int currentCredits;
     // Start is called before the first frame update
     void Start()
     {
-        text = gameObject.GetComponent<TextMeshProUGUI>();
-        currentCredits = PlayerStats.credits;
+        text = GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        currentCredits = PlayerStats.credits;
-        text.SetText($"Credits: {currentCredits}");
+            text.SetText(LevelSelector.text[2]);
     }
 }

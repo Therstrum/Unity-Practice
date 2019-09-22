@@ -7,8 +7,10 @@ public class credit : MonoBehaviour
     private Vector2 randomdir;
     Rigidbody2D rb;
     Vector2 distanceToPlayer;
+    Vector2 movement;
     bool collecting = false;
     public static GameObject creditPrefab;
+   
 
 
     void Awake()
@@ -40,18 +42,19 @@ public class credit : MonoBehaviour
         //if the player is in range
         if (collecting)
         {
-            //get the direction to the player and move in that direction
+            //get the direction to the player
             Vector2 direction = (playerController.playerPosition - rb.position).normalized;
             //move with force so there is still momentum if the condition becomes false
             //rb.AddForce(direction * 10f);
 
             //if needed, can move position instead
-            Vector2 newPos = rb.position + direction * Time.fixedDeltaTime * 6f;
+            Vector2 newPos = rb.position+ direction * Time.fixedDeltaTime * 6f;
             rb.MovePosition(newPos);
  
         }
+        
     }
-    //when colliding with a player. Destroy self and add to total credits.
+    //when colliding with a player. Add to total credits.
     public static void Collect()
     {
         {

@@ -35,6 +35,7 @@ public class enemyShooterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //MOVEMENT
         //if this isn't already moving
         if (!isStrafing)
         {
@@ -58,7 +59,7 @@ public class enemyShooterController : MonoBehaviour
         //constantly falling
         movement.y = -0.2f;
 
-
+        //SHOOTING
         if (enemyShotCooldown)
         {//if on a shot cooldown subtract from the cooldown timer, 
             enemyCooldownTimer -= Time.deltaTime;
@@ -78,42 +79,41 @@ public class enemyShooterController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        //move
-
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        //when the enemy gets to the bottom of the screen, teleport back to top.
+        Collider2D w = other.collider.GetComponent<CompositeCollider2D>();
+        movementDir = movementDir * -1;
+        if (other.gameObject.tag == "Teleportback")
+        {
+            ReturnToTop(rb.position.y);   
+        }
 
     }
-    public void Launch()
-    {
-        StartCoroutine("Launch2");
-    }
+
     public void ChangeHealth(float damage)
     {
         //public method that player weapons can call to damage this.
         enemyHealth -= damage;
         if (enemyHealth <= 0)
         {
-            DropLoot();
+            //DropLoot();
+            WaveController.DropLoot(credit, 1, rb.position);
             dead = true;
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        Collider2D w = other.collider.GetComponent<CompositeCollider2D>();
-        movementDir = movementDir * -1;
-        if (other.gameObject.tag == "Teleportback")
-        {
-            ReturnToTop(rb.position.y);
-            
-        }
-    }
     private void ReturnToTop (float y)
     {
+        //not sure if 'this' is necessary
         this.rb.position = this.rb.position + 11f * Vector2.up;
     }
+
     private void DropLoot()
     {
         this.lootDropped = Random.Range(1 * PlayerStats.lootChance, 100);
@@ -133,6 +133,10 @@ public class enemyShooterController : MonoBehaviour
         lootDropped = 0f;
         return;
           
+    }
+    public void Launch()
+    {
+        StartCoroutine("Launch2");
     }
     IEnumerator Launch2()
     {

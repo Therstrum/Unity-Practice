@@ -50,7 +50,18 @@ public class playerController : MonoBehaviour
     {
         playerRigidBody.MovePosition(playerRigidBody.position + movement * PlayerStats.playerSpeed * Time.fixedDeltaTime);
     }
-        //methods
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Credit")
+        {
+            credit.Collect();
+            Destroy(collision.gameObject);
+            Debug.Log(collision.gameObject.tag);
+        }
+
+
+    }
+    //methods
     void Launch()
     {
         //weaponLaserBurst
@@ -68,21 +79,10 @@ public class playerController : MonoBehaviour
             shotCooldownTimer = PlayerStats.playerShotRate;
         }
     }
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Credit") 
-        {
-            credit.Collect();
-            Destroy(collision.gameObject);
-            Debug.Log(collision.gameObject.tag);
-        }
 
-
-    }
     public static void ChangeHealth(float damageTaken)
     {
         playerCurrentHealth -= damageTaken;
-        //Debug.Log("Current Health" + playerCurrentHealth + "/" + PlayerStats.playerMaxHealth);
         if (playerCurrentHealth <= 0)
         {
             //Debug.Log("Game Over Man!");

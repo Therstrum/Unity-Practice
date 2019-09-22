@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Prototype/Scenes/Shop.unity
     guid: af0597a7759b3fb44897cab5fe5777c4
+  - enabled: 1
+    path: Assets/Prototype/Scenes/Level select.unity
+    guid: 23c606bcb5a0ea14fb0ead349e777d91
   m_configObjects: {}

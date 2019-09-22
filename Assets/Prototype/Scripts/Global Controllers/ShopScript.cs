@@ -43,7 +43,7 @@ public class ShopScript : MonoBehaviour
     }
     public void LeaveShop()
     {
-        SceneController.ChangeScene();
+        SceneController.GoToLevelSelect();
     }
 
 
