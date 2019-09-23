@@ -59,7 +59,6 @@ public class credit : MonoBehaviour
     {
         {
             PlayerStats.credits++;
-            Debug.Log("Credits: " + PlayerStats.credits);
         }
     }
 }

@@ -56,7 +56,6 @@ public class playerController : MonoBehaviour
         {
             credit.Collect();
             Destroy(collision.gameObject);
-            Debug.Log(collision.gameObject.tag);
         }
 
 

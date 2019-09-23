@@ -9,27 +9,30 @@ public class enemyShooterController : MonoBehaviour
     public float enemyCooldownTimer;
     public GameObject enemyWeapon;
     public Rigidbody2D rb;
-    float enemyHealth;
-    float enemyMaxHealth = 30f;
+    public float enemyHealth;
+    public static float enemyMaxHealth;
+    public static float enemyHealthAdjusted;
     Vector2 movement;
     bool isStrafing = false;
     public float strafingTime;
     public int movementDir;
     private Vector2 currentPosition;
     Animator animator;
-    private float lootDropped = 0;
-    private float lootAmount = 0;
+    private float enemyDifficulty = 1;
+
     public GameObject credit;
     public bool dead = false;
 
     // Start is called before the first frame update
     void Awake()
     {
+        enemyMaxHealth = 30f;
+        enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
+        enemyHealth = enemyHealthAdjusted;
         WaveController.enemiesRemaining++;
         enemyCooldownTimer = 1f + Random.Range(.75f, 1.5f);
-        enemyHealth = enemyMaxHealth;
         animator = GetComponent<Animator>();
-        
+
     }
 
     // Update is called once per frame
@@ -102,7 +105,7 @@ public class enemyShooterController : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, 1, rb.position);
+            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
             dead = true;
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
@@ -114,7 +117,7 @@ public class enemyShooterController : MonoBehaviour
         this.rb.position = this.rb.position + 11f * Vector2.up;
     }
 
-    private void DropLoot()
+   /* private void DropLoot()
     {
         this.lootDropped = Random.Range(1 * PlayerStats.lootChance, 100);
         this.lootAmount = Random.Range(5 * PlayerStats.lootMulti, 20 * PlayerStats.lootMulti);
@@ -134,6 +137,7 @@ public class enemyShooterController : MonoBehaviour
         return;
           
     }
+    */
     public void Launch()
     {
         StartCoroutine("Launch2");
