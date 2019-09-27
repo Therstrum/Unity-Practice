@@ -4,54 +4,80 @@ using UnityEngine;
 
 public class EnemyFollower : MonoBehaviour
 {
-    bool isMoving = false;
+    public bool isMoving = false;
     Vector2 getDirection;
-    public RigidBody2d rb;
-    static float enemyHealth;
+    public Rigidbody2D rb;
+    public float enemyHealth;
     static float enemyMaxHealth;
     static float enemyHealthAdjusted;
+    public float enemyCooldownTimer;
+    public float enemyCooldownSpeed;
+    private float enemyDifficulty = 1;
+    public GameObject credit;
     // Start is called before the first frame update
     void Awake()
     {
-        rb = RigidBody2d.GetComponent<RigidBody2d>();
-	 enemyMaxHealth = 30f;
+        rb = GetComponent<Rigidbody2D>();
+	    enemyMaxHealth = 30f;
         enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
         enemyHealth = enemyHealthAdjusted;
         WaveController.enemiesRemaining++;
+        enemyCooldownSpeed = 1.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isMoving)
-	{
-	    //rotate the sprite towards the player
-	    //rb.transform.z = getDirection;
+        if (enemyCooldownTimer > 0)
+        {
+            enemyCooldownTimer -= Time.fixedDeltaTime;
 
-	    //get the vector towards the player and start movement
-	    getDirection = (playerController.playerPosition - rb.position).normalized
-	    StartCoroutine(Movement(getDirection));
+            if (enemyCooldownTimer <= 0)
+            {
+                isMoving = true;
+            }
+        }
     }
+
+
     void FixedUpdate()
     {
-	
-    }
-    void OnCollisionEnter2d(Collision other)
-	{
-	    if (other.GameObject.Tag != “Projectile”)
-	    {
-	     isMoving = false;
-	     //consider stopping movement too
-	    }
-	}
-    IEnumerator Movement(Vector2 direction)
-    {
-	isMoving = true;
-	;
-	yield return new WaitForSeconds(2);
-	rb.AddForce(direction * 2f,ForceMode2d.Impulse);
-	yield return new WaitForSeconds(2);
-	isMoving = false;	
+        Vector2 lookDir = (playerController.playerPosition - rb.position).normalized;
+        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg +90f;
+        rb.rotation = angle;
+        if (isMoving)
+        {
+            rb.AddForce((playerController.playerPosition - rb.position).normalized * 20f, ForceMode2D.Impulse);
+            isMoving = false;
+            enemyCooldownTimer = enemyCooldownSpeed;
+        }
     }
 
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "playerWeapon")
+        {
+            ChangeHealth();
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.tag != "playerWeapon")
+        {
+            isMoving = false;
+            //consider stopping movement too
+        }
+    }
+
+    public void ChangeHealth()
+    {
+        //public method that player weapons can call to damage this.
+        enemyHealth -= PlayerStats.playerDamage;
+        if (enemyHealth <= 0)
+        {
+            //DropLoot();
+            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.enemiesRemaining--;
+            Destroy(gameObject);
+        }
+    }
 }

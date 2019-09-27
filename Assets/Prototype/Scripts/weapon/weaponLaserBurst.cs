@@ -25,17 +25,11 @@ public class weaponLaserBurst : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         Collider2D w = other.collider.GetComponent<CompositeCollider2D>();
+
         if (w != null)
         {
             Destroy(gameObject);
         }
-        if (other.gameObject.tag == "enemy")
-        {
-            var collidedEnemy = other.gameObject.GetComponent<enemyShooterController>();
-            collidedEnemy.ChangeHealth(damage);
-            Destroy(gameObject);
-        }
-
     }
 
 }

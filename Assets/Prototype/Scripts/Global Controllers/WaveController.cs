@@ -9,8 +9,12 @@ public class WaveController : MonoBehaviour
     public static int enemiesRemaining;
     public float maxEnemySpawn;
     public enemyShooterController enemy;
-    public static int difficulty =1;
+    public static int difficulty = 1;
     public static int loot;
+    bool waveCooldown;
+    public static float levelEndTimer = 5f;
+    public static bool levelFinished = false;
+    public GameObject levelCompleteText;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +24,7 @@ public class WaveController : MonoBehaviour
         maxWave = 3;
         enemiesRemaining = 0;
         //enemyShooterController.enemyMaxHealth *= 1 + Mathf.Abs(((1 - difficulty) / 2));
-        Debug.Log("difficulty: "  + difficulty);
+        Debug.Log("difficulty: " + difficulty);
     }
 
     // Update is called once per frame
@@ -30,18 +34,25 @@ public class WaveController : MonoBehaviour
         if (enemiesRemaining <= 0)
         {
             //if we haven't finished the last wave
-            if (currentWave < maxWave)
+            if (currentWave < maxWave && !waveCooldown)
             {
-                //increment to the next wave and do the stuff for that wave
-                currentWave++;
+                //increment to the next wave and do the stuff for that 
+                waveCooldown = true;
                 NextWave();
             }
             //if the last wave was the last wave
             else if (currentWave == maxWave)
             {
-                //go to the shop
-                //TO DO: Instead of going directly to shop, run method to choose random scene and go there
-                SceneController.GoToShop();
+                levelFinished = true;
+                levelEndTimer -= Time.deltaTime;
+                if (levelEndTimer <= 0)
+                {
+                    //go to the shop
+                    //TO DO: Instead of going directly to shop, run method to choose random scene and go there
+                    levelFinished = false;
+                    levelEndTimer = 5f;
+                    SceneController.GoToShop();
+                }
             }
         }
 
@@ -49,16 +60,26 @@ public class WaveController : MonoBehaviour
     public void NextWave()
     {
         //TO DO: add difficulty modifer to maxEnemySpawn lower and upper bound
-        maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty/2 + difficulty), 3 + (2*difficulty)));
+
+        StartCoroutine("SpawnTimer");
+        
+    }
+    IEnumerator SpawnTimer()
+    {
+        yield return new WaitForSeconds(3);
+        currentWave++;
+        maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + (2 * difficulty)));
         for (int i = 0; i < maxEnemySpawn; i++)
         {
             //TO DO: Instead of spawning one type of enemy, for each instantiate choose a random enemy
             //EXPLORE: Instead of instantiating random enemies per wave, make a set array of enemies. Run a random range and choose from the array which group of enemies to spawn
             //Randomize a random x on the screen, at the top of the screen.
-            Vector2 randomize = new Vector2(Random.Range(-9, 9), 5);
+            Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f,8));
             Instantiate(enemy, randomize, Quaternion.identity);
-            Debug.Log("Wave: " + currentWave + "Enemies Spawned: " + (i+1));
-        } 
+            Debug.Log("Wave: " + currentWave + "Enemies Spawned: " + (i + 1));
+        }
+        waveCooldown = false;
+        
     }
     public static void DropLoot(GameObject credit, float difficultyMod, Vector2 enemyRB)
     {

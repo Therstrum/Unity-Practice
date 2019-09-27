@@ -4,24 +4,31 @@ using UnityEngine;
 
 public class enemyShooterController : MonoBehaviour
 {
-    public bool enemyShotCooldown = true;
-    float enemyCooldownSpeed = 2f;
-    public float enemyCooldownTimer;
-    public GameObject enemyWeapon;
-    public Rigidbody2D rb;
-    public float enemyHealth;
-    public static float enemyMaxHealth;
-    public static float enemyHealthAdjusted;
+    //movement variables
     Vector2 movement;
     bool isStrafing = false;
     public float strafingTime;
     public int movementDir;
     private Vector2 currentPosition;
-    Animator animator;
+
+    //attack variables
+    public bool enemyShotCooldown = true;
+    float enemyCooldownSpeed = 2f;
+    public float enemyCooldownTimer;
+
+    //health variables
+    public float enemyHealth;
+    public static float enemyMaxHealth;
+    public static float enemyHealthAdjusted;
+
+    //Gameplay Variables
     private float enemyDifficulty = 1;
 
+    //Object properties
+    public Rigidbody2D rb;
+    public GameObject enemyWeapon;
     public GameObject credit;
-    public bool dead = false;
+    Animator animator;
 
     // Start is called before the first frame update
     void Awake()
@@ -60,7 +67,7 @@ public class enemyShooterController : MonoBehaviour
             }
         }
         //constantly falling
-        movement.y = -0.2f;
+        movement.y = -0.6f;
 
         //SHOOTING
         if (enemyShotCooldown)
@@ -90,23 +97,29 @@ public class enemyShooterController : MonoBehaviour
     {
         //when the enemy gets to the bottom of the screen, teleport back to top.
         Collider2D w = other.collider.GetComponent<CompositeCollider2D>();
-        movementDir = movementDir * -1;
+        if (w  != null)
+            {
+            movementDir = movementDir * -1;
+            }
         if (other.gameObject.tag == "Teleportback")
         {
             ReturnToTop(rb.position.y);   
         }
-
+        else if (other.gameObject.tag == "playerWeapon")
+        {
+            ChangeHealth();
+            Destroy(other.gameObject);
+        }
     }
 
-    public void ChangeHealth(float damage)
+    public void ChangeHealth()
     {
         //public method that player weapons can call to damage this.
-        enemyHealth -= damage;
+        enemyHealth -= PlayerStats.playerDamage;
         if (enemyHealth <= 0)
         {
             //DropLoot();
             WaveController.DropLoot(credit, enemyDifficulty, rb.position);
-            dead = true;
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
         }
@@ -117,27 +130,6 @@ public class enemyShooterController : MonoBehaviour
         this.rb.position = this.rb.position + 11f * Vector2.up;
     }
 
-   /* private void DropLoot()
-    {
-        this.lootDropped = Random.Range(1 * PlayerStats.lootChance, 100);
-        this.lootAmount = Random.Range(5 * PlayerStats.lootMulti, 20 * PlayerStats.lootMulti);
-        Debug.Log("loot chance:" + lootDropped + "-- loot amount: " + lootAmount);
-        if (lootDropped >= 40)
-        {
-            for (int i = 1; i < this.lootAmount; i++)
-            {
-                int l = i;
-                Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
-                GameObject drop = Instantiate(credit, rb.position + randomize, Quaternion.identity);
-            }
-        }
-        
-        lootAmount = 0f;
-        lootDropped = 0f;
-        return;
-          
-    }
-    */
     public void Launch()
     {
         StartCoroutine("Launch2");
