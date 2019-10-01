@@ -11,8 +11,11 @@ public class EnemyLaser : MonoBehaviour
 
     //attack variables
     public bool enemyShotCooldown = true;
-    float enemyCooldownSpeed = 2f;
-    public float enemyCooldownTimer;
+    bool isShooting = true;
+    float enemyCooldownSpeed = 6f;
+    public float enemyCooldownTimer;  
+    public Vector2 shotDirection;
+    int damage = 10;
 
     //Gameplay Variables
     private float enemyDifficulty = 1;
@@ -21,6 +24,8 @@ public class EnemyLaser : MonoBehaviour
     public Rigidbody2D rb;
     public GameObject enemyWeapon;
     public GameObject credit;
+    public LineRenderer traceShot;
+    public LineRenderer bigLaser;
 
     //Movement Variables
     Vector2 movement;
@@ -33,18 +38,21 @@ public class EnemyLaser : MonoBehaviour
 
     void Awake()
     {
+        WaveController.enemiesRemaining++;
         float pickSide = Random.Range(0, 101);
         if (pickSide <= 50)
         {
-            rb.position = new Vector2(-8.2f, rb.position.y);
+            rb.position = new Vector2(-8.2f, 5);
         }
         else
         {
-            rb.position = new Vector2(8.2f, rb.position.y);
+            rb.position = new Vector2(8.2f, 5);
         }
         enemyMaxHealth = 30f;
         enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
         enemyHealth = enemyHealthAdjusted;
+
+        shotDirection.x = 0;
 
     }
 
@@ -58,11 +66,13 @@ public class EnemyLaser : MonoBehaviour
             if (enemyCooldownTimer <= 0)
             {
                 enemyShotCooldown = false;
+                isShooting = true;
             }
         }
         else
         //if not on shot cooldown, start a fire. Go back on cooldown and reset the cooldown timer.
         {
+
             enemyShotCooldown = true;
             enemyCooldownTimer = enemyCooldownSpeed + Random.Range(.2f, 2);
             Launch();
@@ -86,7 +96,7 @@ public class EnemyLaser : MonoBehaviour
             }
             isStrafing = true;
         }
-        else
+        else if (!isShooting)
         {
             //move in the chosen direction for the chosen duration
             movement.y = movementDir * 4f;
@@ -120,7 +130,7 @@ public class EnemyLaser : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.DropLoot(enemyDifficulty, rb.position);
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
         }
@@ -132,8 +142,74 @@ public class EnemyLaser : MonoBehaviour
     }
     IEnumerator Launch2()
     {
+        shotDirection.x = 0f;
+        shotDirection.y = Random.Range(-7, 7);
+        Vector2 laserDirection = (shotDirection - rb.position).normalized;
+        float lookDirection = Mathf.Atan2(laserDirection.y, laserDirection.x) * Mathf.Rad2Deg + 90f;
+        rb.rotation = lookDirection;
+        RaycastHit2D hitInfo = Physics2D.Raycast(rb.position, laserDirection*100f);
+        yield return new WaitForSeconds(1f);
+        for (int i = 0; i < 3; i++)
+        {
+            if (hitInfo)
+            {
+                traceShot.SetPosition(0, this.rb.position);
+                traceShot.SetPosition(1, this.rb.position + laserDirection * 100f);
 
-        //animator.SetTrigger("fire");
-        yield return new WaitForSeconds(0.9f);
+            }
+            else
+            {
+                traceShot.SetPosition(0, this.rb.position);
+                traceShot.SetPosition(1, this.rb.position+ laserDirection *100f);
+            }
+            Debug.DrawRay(this.rb.position, laserDirection*100f);
+            traceShot.enabled = true;
+            yield return new WaitForSeconds(.02f);
+            traceShot.enabled = false;
+            yield return new WaitForSeconds(.15f);
+        }
+        yield return new WaitForSeconds(.5f);
+
+        
+        if (hitInfo)
+        {
+            bigLaser.SetPosition(0, this.rb.position);
+            bigLaser.SetPosition(1, this.rb.position + laserDirection * 100f);
+            playerController player = hitInfo.transform.GetComponent<playerController>();
+            if (player != null)
+            {
+                /*while (bigLaser.enabled == true);
+                {
+                    playerController.ChangeHealth(damage);
+                }
+                */
+                
+            }
+        }
+        bigLaser.enabled = true;
+        yield return new WaitForSeconds(3f);
+        bigLaser.enabled = false;
+        isShooting = false;
     }
 }
+//use this for final laser
+/*      
+
+                if (hitInfo)
+            {
+                traceShot.SetPosition(0, this.rb.position);
+                traceShot.SetPosition(1, hitInfo.point);
+                            if (player != null)
+            {
+                playerController player = hitInfo.transform.GetComponent<playerController>();
+                //playerController.ChangeHealth(damage);
+            }
+
+            }
+            else
+            {
+                traceShot.SetPosition(0, this.rb.position);
+                traceShot.SetPosition(1, this.rb.position + shotDirection * 100f);
+            }
+            }
+    */

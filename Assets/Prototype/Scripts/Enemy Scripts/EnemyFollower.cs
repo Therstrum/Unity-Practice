@@ -17,11 +17,11 @@ public class EnemyFollower : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        WaveController.enemiesRemaining++;
         rb = GetComponent<Rigidbody2D>();
 	    enemyMaxHealth = 30f;
         enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
         enemyHealth = enemyHealthAdjusted;
-        WaveController.enemiesRemaining++;
         enemyCooldownSpeed = 1.5f;
     }
 
@@ -75,9 +75,10 @@ public class EnemyFollower : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.DropLoot(enemyDifficulty, rb.position);
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
+            
         }
     }
 }

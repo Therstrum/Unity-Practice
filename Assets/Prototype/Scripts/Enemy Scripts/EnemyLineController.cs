@@ -74,7 +74,7 @@ public class EnemyLineController : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.DropLoot(enemyDifficulty, rb.position);
             dead = true;
             WaveController.enemiesRemaining--;
             Destroy(gameObject);

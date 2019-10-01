@@ -119,7 +119,7 @@ public class enemyShooterController : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.DropLoot(enemyDifficulty, rb.position);
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
         }

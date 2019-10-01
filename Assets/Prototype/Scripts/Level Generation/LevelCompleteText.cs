@@ -18,8 +18,16 @@ public class LevelCompleteText : MonoBehaviour
     {
         if (WaveController.levelFinished)
         {
-            timer -= Time.deltaTime;
-            text.SetText("Level Complete! " + Mathf.CeilToInt(timer));
+            if (WaveController.gameWon)
+            {
+                timer -= Time.deltaTime;
+                text.SetText("You've broken free from the corruptor's control! Plotting a course home... \n" + Mathf.CeilToInt(timer));
+            }
+            else
+            {
+                timer -= Time.deltaTime;
+                text.SetText("Level Complete! " + Mathf.CeilToInt(timer));
+            }
         }
     }
 }

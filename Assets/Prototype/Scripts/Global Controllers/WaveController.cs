@@ -4,26 +4,44 @@ using UnityEngine;
 
 public class WaveController : MonoBehaviour
 {
+   
+    //Wave Variables
     public int currentWave;
     public int maxWave;
     public static int enemiesRemaining;
-    public float maxEnemySpawn;
-    public enemyShooterController enemy;
-    public static int difficulty = 1;
-    public static int loot;
-    bool waveCooldown;
     public static float levelEndTimer = 5f;
     public static bool levelFinished = false;
+    public static bool gameWon = false;
+
+    //Spawning Variables
+    public float maxEnemySpawn;
+    public enemyShooterController enemyShooter;
+    public EnemyFollower enemyFollower;
+    public EnemyMultiShooter enemyMultiShooter;
+    public EnemyLaser enemyLaser;
+    public GameObject creditLow;
+    static GameObject creditDrop;
+    
+
+    //Difficulty Variables
+    public static int loot;
+    public static int difficulty = 1;
+    public static bool waveCooldown;
+    
+
+    //Attached GameObjects
     public GameObject levelCompleteText;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Awake()
+    {       
+
+        PlayerStats.totalDifficulty += difficulty;
+        creditDrop = creditLow;
         currentWave = 0;
         //TO DO: Get the difficulty modifier of the current scene and add it here. Add to maxWave.
-        maxWave = 3;
+        maxWave = 5;
         enemiesRemaining = 0;
-        //enemyShooterController.enemyMaxHealth *= 1 + Mathf.Abs(((1 - difficulty) / 2));
         Debug.Log("difficulty: " + difficulty);
     }
 
@@ -45,13 +63,26 @@ public class WaveController : MonoBehaviour
             {
                 levelFinished = true;
                 levelEndTimer -= Time.deltaTime;
-                if (levelEndTimer <= 0)
+                
+                if (PlayerStats.levelsCompleted >= PlayerStats.levelsTotal)
                 {
-                    //go to the shop
-                    //TO DO: Instead of going directly to shop, run method to choose random scene and go there
+                    gameWon = true;
+                }
+
+                if (levelEndTimer <= 0)
+                { 
                     levelFinished = false;
                     levelEndTimer = 5f;
-                    SceneController.GoToShop();
+                    PlayerStats.levelsCompleted++;
+                    if (gameWon)
+                    {
+                        SceneController.GoToWinScreen();
+                    }
+                    else
+                    {
+                        SceneController.GoToShop();
+                    }
+
                 }
             }
         }
@@ -60,28 +91,87 @@ public class WaveController : MonoBehaviour
     public void NextWave()
     {
         //TO DO: add difficulty modifer to maxEnemySpawn lower and upper bound
-
-        StartCoroutine("SpawnTimer");
+        //check if event is in progress- if (RandomEventManager.eventComplete)
         
+        if (currentWave == 3)
+        {
+            currentWave++;
+            RandomEventManager.RandomEvent();
+        }
+        else
+        {
+            StartCoroutine("FirstWaveCycleSpawn");
+        }
     }
-    IEnumerator SpawnTimer()
+    IEnumerator LevelEvent()
+    {
+        Debug.Log("spawning random event");
+        yield return new WaitForSeconds (4);
+        Debug.Log("Going to next wave");
+        NextWave();
+    }
+
+    IEnumerator FirstWaveCycleSpawn()
     {
         yield return new WaitForSeconds(3);
         currentWave++;
         maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + (2 * difficulty)));
         for (int i = 0; i < maxEnemySpawn; i++)
         {
-            //TO DO: Instead of spawning one type of enemy, for each instantiate choose a random enemy
+            float enemyTypeChance = Random.Range(0f, 100f);
+            if (enemyTypeChance >= 0 && enemyTypeChance <= 55f)
+            {
+                SpawnShooter();
+            }
+            else if (enemyTypeChance > 55 && enemyTypeChance <= 70)
+            {
+                SpawnFollower();
+            }
+            else if (enemyTypeChance > 70 && enemyTypeChance <= 85)
+            {
+                SpawnLaser();
+            }
+            else
+            {
+                SpawnMulti();
+            }
             //EXPLORE: Instead of instantiating random enemies per wave, make a set array of enemies. Run a random range and choose from the array which group of enemies to spawn
-            //Randomize a random x on the screen, at the top of the screen.
-            Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f,8));
-            Instantiate(enemy, randomize, Quaternion.identity);
-            Debug.Log("Wave: " + currentWave + "Enemies Spawned: " + (i + 1));
+
         }
+        StartCoroutine("SecondWaveCycleSpawn");
         waveCooldown = false;
         
     }
-    public static void DropLoot(GameObject credit, float difficultyMod, Vector2 enemyRB)
+    IEnumerator SecondWaveCycleSpawn()
+    {
+        yield return new WaitForSeconds(4);
+        float spawnType = Random.Range(0, 100f);
+        if (spawnType >=0 && spawnType <=50)
+        {
+            for (int i = 0; i <= 2*difficulty; i++)
+            {
+                SpawnShooter();
+            }
+        }
+        else if (spawnType > 50 && spawnType <= 75)
+        {
+            for (int i = 0; i <= difficulty; i++)
+            {
+                SpawnFollower();
+            }
+        }
+        else
+        {
+            for (int i = 0; i < difficulty-1; i++)
+            {
+                SpawnMulti();
+                SpawnLaser();
+            }
+            
+        }
+    }
+
+    public static void DropLoot(float difficultyMod, Vector2 enemyRB)
     {
         //Set the amount of loot that drops based on difficuly multipliers
         float lootMulti = (PlayerStats.lootMulti * difficulty * difficultyMod);
@@ -90,18 +180,41 @@ public class WaveController : MonoBehaviour
         float lootChance = Random.Range(1, 100);
 
         //Check if the roll meets a threshold that lowers based on difficulty;
-        if (lootChance >= (50-(5*(difficulty+difficultyMod))))
+        if (lootChance >= (50 - (5 * (difficulty + difficultyMod))))
         {
             for (int i = 1; i < lootAmount; i++)
             {
+
                 //pick a random vector close to the origin
                 Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
                 //spawn credits at the location where the enemy died and add some randomness to the location
-                GameObject drop = Instantiate(credit, (enemyRB) + randomize, Quaternion.identity);
+                GameObject drop = Instantiate(creditDrop, (enemyRB) + randomize, Quaternion.identity);
             }
         }
         //dunno if this is necessary but reset the values afterwards
         lootAmount = 0f;
         lootChance = 0f;
     }
+
+    void SpawnShooter()
+    {
+        Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f, 8));
+        Instantiate(enemyShooter, randomize, Quaternion.identity);
+    }
+    void SpawnFollower()
+    {
+        Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f, 8));
+        Instantiate(enemyFollower, randomize, Quaternion.identity);
+    }
+    void SpawnLaser()
+    {
+        Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f, 8));
+        Instantiate(enemyLaser, randomize, Quaternion.identity);
+    }
+    void SpawnMulti()
+    {
+        Vector2 randomize = new Vector2(Random.Range(-9, 9), Random.Range(5.25f, 8));
+        Instantiate(enemyMultiShooter, randomize, Quaternion.identity);
+    }
+
 }

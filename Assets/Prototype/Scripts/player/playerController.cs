@@ -84,7 +84,7 @@ public class playerController : MonoBehaviour
         playerCurrentHealth -= damageTaken;
         if (playerCurrentHealth <= 0)
         {
-            //Debug.Log("Game Over Man!");
+            SceneController.Lose();
         }
     }
    

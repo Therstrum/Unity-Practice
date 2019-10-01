@@ -38,5 +38,12 @@ public class LevelSelector : MonoBehaviour
     {
         SceneController.ChangeScene(levelChoice[2].difficultyScale, levelChoice[2].lootScale);
     }
-
+    public void GoToMainScreen()
+    {
+        SceneController.GoToMainScreen();
+    }
+    public void StartGame()
+    {
+        SceneController.StartGame();
+    }
 }

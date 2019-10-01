@@ -50,6 +50,7 @@ public class EnemyMultiShooter : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        WaveController.enemiesRemaining++;
         enemyMaxHealth = 30f;
         enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
         enemyHealth = enemyHealthAdjusted;
@@ -155,7 +156,7 @@ public class EnemyMultiShooter : MonoBehaviour
         if (enemyHealth <= 0)
         {
             //DropLoot();
-            WaveController.DropLoot(credit, enemyDifficulty, rb.position);
+            WaveController.DropLoot(enemyDifficulty, rb.position);
             WaveController.enemiesRemaining--;
             Destroy(gameObject);
         }
