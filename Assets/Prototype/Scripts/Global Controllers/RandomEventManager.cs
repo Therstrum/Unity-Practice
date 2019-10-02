@@ -5,6 +5,7 @@ using UnityEngine;
 public class RandomEventManager : MonoBehaviour
 {
     public GameObject oldShip;
+    public HullPoints hullPoint;
     bool oldShipEvent = false;
     public static bool eventInProgress = false;
     public static bool eventStart = false;
@@ -79,9 +80,16 @@ public class RandomEventManager : MonoBehaviour
         {
             EventTextLower.text.SetText("The losses of the past are stepping stones for the future");
         }
-        
+
         //spawn some health packs
-        playerController.playerCurrentHealth = PlayerStats.playerMaxHealth;
+        int dropChance = Random.Range(1, 5);
+        for (int i = 0; i < dropChance; i++)
+        {
+            //pick a random vector close to the origin
+            Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
+            //spawn credits at the location where the enemy died and add some randomness to the location
+            Instantiate(hullPoint, randomize, Quaternion.identity);
+        }
         yield return new WaitForSeconds(5);
         EventTextLower.text.enabled = false;
         WaveController.waveCooldown = false;

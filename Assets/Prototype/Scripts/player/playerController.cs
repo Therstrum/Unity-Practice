@@ -87,5 +87,11 @@ public class playerController : MonoBehaviour
             SceneController.Lose();
         }
     }
-   
+   public static void HealthUp(float healAmount)
+    {
+        if (playerCurrentHealth < PlayerStats.playerMaxHealth)
+        {
+            playerCurrentHealth += healAmount;
+        }
+    }
 }
