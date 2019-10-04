@@ -10,10 +10,12 @@ public class RandomEventManager : MonoBehaviour
     public static bool eventInProgress = false;
     public static bool eventStart = false;
     static int eventType;
+    Vector2 spawnOrigin;
 
     // Start is called before the first frame update
     void Start()
     {
+        spawnOrigin.Set(0, 7);
         WaveController Wave = GameObject.Find("_WaveController").GetComponent<WaveController>();
         Wave.NextWave();
     }
@@ -55,17 +57,19 @@ public class RandomEventManager : MonoBehaviour
             }
             else if (eventChance > 33 && eventChance <= 66)
             {
-                eventType = 2;
+                eventType = 1;
             }
             else
             {
-                eventType = 3;
+                eventType = 1;
             }
         }
         eventStart = true;
     }
     IEnumerator FullHealEvent()
     {
+        GameObject ship = Instantiate(oldShip, spawnOrigin, Quaternion.identity);
+        yield return new WaitForSeconds(5);
         EventTextLower.text.enabled = true;
         int randomText = Random.Range(0, 100);
         if (randomText >= 0 && randomText <= 33)
@@ -82,15 +86,16 @@ public class RandomEventManager : MonoBehaviour
         }
 
         //spawn some health packs
-        int dropChance = Random.Range(1, 5);
+        int dropChance = Random.Range(2, 6);
         for (int i = 0; i < dropChance; i++)
         {
             //pick a random vector close to the origin
             Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
             //spawn credits at the location where the enemy died and add some randomness to the location
             Instantiate(hullPoint, randomize, Quaternion.identity);
+            yield return new WaitForSeconds(.5f);
         }
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
         EventTextLower.text.enabled = false;
         WaveController.waveCooldown = false;
     }

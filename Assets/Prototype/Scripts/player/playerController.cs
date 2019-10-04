@@ -5,7 +5,7 @@ using UnityEngine;
 public class playerController : MonoBehaviour
 {
     //health
-    public static float playerCurrentHealth;
+    public static float playerCurrentHealth =100;
     //movement
     public Rigidbody2D playerRigidBody;
     Vector2 movement;
@@ -21,7 +21,7 @@ public class playerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerCurrentHealth = PlayerStats.playerMaxHealth;
+
     }
 
     // Update is called once per frame

@@ -26,7 +26,7 @@ public class WaveController : MonoBehaviour
     //Difficulty Variables
     public static int loot;
     public static int difficulty = 1;
-    public static bool waveCooldown;
+    public static bool waveCooldown = false;
     
 
     //Attached GameObjects
@@ -90,8 +90,6 @@ public class WaveController : MonoBehaviour
     }
     public void NextWave()
     {
-        //TO DO: add difficulty modifer to maxEnemySpawn lower and upper bound
-        //check if event is in progress- if (RandomEventManager.eventComplete)
         
         if (currentWave == 3)
         {
@@ -113,38 +111,45 @@ public class WaveController : MonoBehaviour
 
     IEnumerator FirstWaveCycleSpawn()
     {
-        yield return new WaitForSeconds(3);
-        currentWave++;
-        maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + (2 * difficulty)));
-        for (int i = 0; i < maxEnemySpawn; i++)
+        //make sure the event only runs once
+        if (waveCooldown) 
         {
-            float enemyTypeChance = Random.Range(0f, 100f);
-            if (enemyTypeChance >= 0 && enemyTypeChance <= 55f)
+            yield return new WaitForSeconds(3);
+            //Pick a random spawn number modified by difficulty
+            maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + (2 * difficulty)));
+            //for each enemy, choose a random one.
+            for (int i = 0; i < maxEnemySpawn; i++)
             {
-                SpawnShooter();
-            }
-            else if (enemyTypeChance > 55 && enemyTypeChance <= 70)
-            {
-                SpawnFollower();
-            }
-            else if (enemyTypeChance > 70 && enemyTypeChance <= 85)
-            {
-                SpawnLaser();
-            }
-            else
-            {
-                SpawnMulti();
-            }
-            //EXPLORE: Instead of instantiating random enemies per wave, make a set array of enemies. Run a random range and choose from the array which group of enemies to spawn
+                float enemyTypeChance = Random.Range(0f, 100f);
+                if (enemyTypeChance >= 0 && enemyTypeChance <= 55f)
+                {
+                    SpawnShooter();
+                }
+                else if (enemyTypeChance > 55 && enemyTypeChance <= 70)
+                {
+                    SpawnFollower();
+                }
+                else if (enemyTypeChance > 70 && enemyTypeChance <= 85)
+                {
+                    SpawnLaser();
+                }
+                else
+                {
+                    SpawnMulti();
+                }
+                //EXPLORE: Instead of instantiating random enemies per wave, make a set array of enemies. Run a random range and choose from the array which group of enemies to spawn
 
+            }
+            //increment the wave counter. This needs to happen after enemies are spawned so enemiesRemaining > 0
+            currentWave++;
+            //start the second part of the wave
+            StartCoroutine("SecondWaveCycleSpawn");
         }
-        StartCoroutine("SecondWaveCycleSpawn");
-        waveCooldown = false;
-        
     }
     IEnumerator SecondWaveCycleSpawn()
     {
         yield return new WaitForSeconds(4);
+        //set another random range for enemy type
         float spawnType = Random.Range(0, 100f);
         if (spawnType >=0 && spawnType <=50)
         {
@@ -169,6 +174,8 @@ public class WaveController : MonoBehaviour
             }
             
         }
+        //tell the controller another wave can be spawned when no more enemies are alive
+        waveCooldown = false;
     }
 
     public static void DropLoot(float difficultyMod, Vector2 enemyRB)

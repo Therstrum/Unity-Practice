@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddc32363e331dd4796414824af64a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWave: 0
+  currentWave: 3
   maxWave: 0
   maxEnemySpawn: 0
   enemyShooter: {fileID: 5360000415512459451, guid: ce2757c9c7f40d7489dc92bf3ac455b4,
@@ -1201,7 +1201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c20963370f600e4aae71e6c5b9c6771, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oldShip: {fileID: 0}
+  oldShip: {fileID: 7447308358895134022, guid: ad03ff06bca220c4c8c0970938f69286, type: 3}
   hullPoint: {fileID: 1453262171474220742, guid: e125b0151a61a304e847671eae04f858,
     type: 3}
 --- !u!4 &204013874
@@ -8926,12 +8926,12 @@ PrefabInstance:
     - target: {fileID: 1453262171474220743, guid: e125b0151a61a304e847671eae04f858,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.07
+      value: 1.17
       objectReference: {fileID: 0}
     - target: {fileID: 1453262171474220743, guid: e125b0151a61a304e847671eae04f858,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.3
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: 1453262171474220743, guid: e125b0151a61a304e847671eae04f858,
         type: 3}
