@@ -42,7 +42,6 @@ public class WaveController : MonoBehaviour
         //TO DO: Get the difficulty modifier of the current scene and add it here. Add to maxWave.
         maxWave = 5;
         enemiesRemaining = 0;
-        Debug.Log("difficulty: " + difficulty);
     }
 
     // Update is called once per frame

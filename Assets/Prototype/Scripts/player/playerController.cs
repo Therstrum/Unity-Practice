@@ -11,6 +11,7 @@ public class playerController : MonoBehaviour
     Vector2 movement;
     public Animator playerAnimator;
     public static Vector2 playerPosition;
+    
 
 
     //weapons
@@ -18,10 +19,15 @@ public class playerController : MonoBehaviour
     bool shotCooldown = false;
     float shotCooldownTimer;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    static bool invincible = false;
+    [SerializeField]
+    public static float invincibleTime;
+    static bool playerHit = false;
 
+    // Start is called before the first frame update
+    void Awake()
+    {
+       
     }
 
     // Update is called once per frame
@@ -44,6 +50,19 @@ public class playerController : MonoBehaviour
             if (shotCooldownTimer < 0)
                 shotCooldown = false;
         }
+        if (invincibleTime >= 0)
+        {
+            invincibleTime -= Time.deltaTime;
+            if (invincibleTime < 0)
+            {
+                invincible = false;
+            }
+        }
+        if (playerHit)
+        {
+            playerHit = false;
+            StartCoroutine("Flash");
+        }
     }
 
     private void FixedUpdate()
@@ -56,6 +75,10 @@ public class playerController : MonoBehaviour
         {
             credit.Collect();
             Destroy(collision.gameObject);
+        }
+        else if (collision.gameObject.tag == "enemy" || collision.gameObject.tag == "Laser")
+        {
+            ChangeHealth(10f);
         }
 
 
@@ -81,17 +104,36 @@ public class playerController : MonoBehaviour
 
     public static void ChangeHealth(float damageTaken)
     {
-        playerCurrentHealth -= damageTaken;
-        if (playerCurrentHealth <= 0)
+        if (!invincible)
+            
         {
-            SceneController.Lose();
+            playerHit = true;
+            invincible = true;
+            playerCurrentHealth -= damageTaken;
+            if (playerCurrentHealth <= 0)
+            {
+                SceneController.Lose();
+            }
+            invincibleTime = 1.25f;
         }
+
     }
    public static void HealthUp(float healAmount)
     {
         if (playerCurrentHealth < PlayerStats.playerMaxHealth)
         {
             playerCurrentHealth += healAmount;
+        }
+    }
+    IEnumerator Flash()
+    {
+        Renderer ren = GetComponent<SpriteRenderer>();
+        for (int i = 0; i < 6; i++)
+        {
+            ren.enabled = false;
+            yield return new WaitForSeconds(.1f);
+            ren.enabled = true;
+            yield return new WaitForSeconds(.1f);
         }
     }
 }

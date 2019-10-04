@@ -9,6 +9,7 @@ TagManager:
   - TeleportToTop
   - Teleportback
   - Credit
+  - Laser
   layers:
   - Default
   - TransparentFX

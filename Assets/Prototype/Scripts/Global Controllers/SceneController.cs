@@ -33,11 +33,12 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene(1);
     }
     public static void GoToMainScreen()
-        {
+    {
         SceneManager.LoadScene(3);
-        }
+    }
     public static void StartGame()
     {
+        ResetStats();
         SceneManager.LoadScene(0);
     }
     public static void GoToWinScreen()
@@ -48,4 +49,25 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.LoadScene(5);
     }
+    private static void ResetStats()
+    {
+        PlayerStats.playerMaxHealth = 100;
+        PlayerStats.playerSpeed = 7.0f;
+        PlayerStats.playerDamage = 10;
+        PlayerStats.playerShotSpeed = 700;
+        PlayerStats.playerShotRate = 0.50f;
+        PlayerStats.lootMulti = 1;
+        PlayerStats.lootChance = 1;
+        PlayerStats.credits = 0;
+        PlayerStats.levelsCompleted = 0;
+        PlayerStats.levelsTotal = 5;
+        PlayerStats.totalDifficulty = 0;
+        WaveController.levelEndTimer = 5f;
+        WaveController.levelFinished = false;
+        WaveController.gameWon = false;
+        WaveController.difficulty = 1;
+        playerController.playerCurrentHealth = 100;
+    }
 }
+
+

@@ -93,7 +93,7 @@ public class RandomEventManager : MonoBehaviour
             Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
             //spawn credits at the location where the enemy died and add some randomness to the location
             Instantiate(hullPoint, randomize, Quaternion.identity);
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.2f);
         }
         yield return new WaitForSeconds(3);
         EventTextLower.text.enabled = false;
