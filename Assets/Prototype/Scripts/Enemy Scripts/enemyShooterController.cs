@@ -19,7 +19,6 @@ public class enemyShooterController : MonoBehaviour
     //health variables
     public float enemyHealth;
     public static float enemyMaxHealth;
-    public static float enemyHealthAdjusted;
 
     //Gameplay Variables
     private float enemyDifficulty = 1;
@@ -34,8 +33,7 @@ public class enemyShooterController : MonoBehaviour
     void Awake()
     {
         enemyMaxHealth = 30f;
-        enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
-        enemyHealth = enemyHealthAdjusted;
+        enemyHealth = enemyMaxHealth;
         WaveController.enemiesRemaining++;
         enemyCooldownTimer = 1f + Random.Range(.75f, 1.5f);
         animator = GetComponent<Animator>();
@@ -127,7 +125,7 @@ public class enemyShooterController : MonoBehaviour
     private void ReturnToTop (float y)
     {
         //not sure if 'this' is necessary
-        this.rb.position = this.rb.position + 11f * Vector2.up;
+        this.rb.position = this.rb.position + 12.5f * Vector2.up;
     }
 
     public void Launch()
@@ -141,7 +139,7 @@ public class enemyShooterController : MonoBehaviour
         yield return new WaitForSeconds(0.9f);
         GameObject enemyFire = Instantiate(enemyWeapon, rb.position * 1.0f, Quaternion.identity);
         EnemyShooterProjectile enemyShooterProjectile = enemyFire.GetComponent<EnemyShooterProjectile>();
-        enemyShooterProjectile.Launch((playerController.playerPosition - rb.position).normalized, 12f);
+        enemyShooterProjectile.Launch((playerController.playerPosition - rb.position).normalized, 10f);
         animator.ResetTrigger("fire");
         
     }

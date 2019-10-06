@@ -18,28 +18,28 @@ public class SceneController : MonoBehaviour
     }
     public static void GoToLevelSelect()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
     public static void ChangeScene(int difficulty, int loot)
     {
         //back to original scene
         WaveController.difficulty = difficulty;
         WaveController.loot = loot;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
     public static void GoToShop()
     {
         //go to shop scene
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
     public static void GoToMainScreen()
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(0);
     }
     public static void StartGame()
     {
         ResetStats();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
     public static void GoToWinScreen()
     {
@@ -58,7 +58,7 @@ public class SceneController : MonoBehaviour
         PlayerStats.playerShotRate = 0.50f;
         PlayerStats.lootMulti = 1;
         PlayerStats.lootChance = 1;
-        PlayerStats.credits = 0;
+        PlayerStats.credits = 25;
         PlayerStats.levelsCompleted = 0;
         PlayerStats.levelsTotal = 5;
         PlayerStats.totalDifficulty = 0;
@@ -68,6 +68,15 @@ public class SceneController : MonoBehaviour
         WaveController.difficulty = 1;
         playerController.playerCurrentHealth = 100;
     }
+    public static void QuitGame()
+    {
+        Application.Quit();
+    }
+    public static void AboutPage()
+    {
+        SceneManager.LoadScene(6);
+    }
 }
+
 
 

@@ -10,13 +10,19 @@ public class GameWinScreen : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        difficultyPercent = (PlayerStats.totalDifficulty / (PlayerStats.levelsTotal*3))*100;
+
         text = GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        text.SetText("Difficulty Score........... " + difficultyPercent + "%");
+        float difficulty = PlayerStats.totalDifficulty;
+        float complete = PlayerStats.levelsCompleted;
+        int maxDiff = (PlayerStats.levelsCompleted * 3) - 2;
+        difficultyPercent = Mathf.Floor(((difficulty / maxDiff)*100));
+        //text.SetText(1/100 + "\n Difficulty Score........... " + difficultyPercent + "%" + "\n" + "Total diff: " + PlayerStats.totalDifficulty +  "\n" + "Max possible: " + PlayerStats.levelsCompleted);
+        text.SetText("You Win! \n \n \n Levels Completed.........." + PlayerStats.levelsCompleted + "\n \n Total Difficulty................." + PlayerStats.totalDifficulty + "\n \n Maximum Difficulty........." + maxDiff + "\n \n Pilot Score................" + difficultyPercent + "%");
+
     }
 }

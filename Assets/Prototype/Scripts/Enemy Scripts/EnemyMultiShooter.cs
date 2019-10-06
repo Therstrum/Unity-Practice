@@ -7,7 +7,6 @@ public class EnemyMultiShooter : MonoBehaviour
     //health variables
     public float enemyHealth;
     public static float enemyMaxHealth;
-    public static float enemyHealthAdjusted;
 
     //attack variables
     public bool enemyShotCooldown = true;
@@ -51,9 +50,8 @@ public class EnemyMultiShooter : MonoBehaviour
     void Awake()
     {
         WaveController.enemiesRemaining++;
-        enemyMaxHealth = 30f;
-        enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
-        enemyHealth = enemyHealthAdjusted;
+        enemyMaxHealth = 60f;
+        enemyHealth = enemyMaxHealth;
 
         movement.y = -.3f;
         //these should be arrays...
@@ -186,11 +184,11 @@ public class EnemyMultiShooter : MonoBehaviour
             EnemyShooterProjectile enemyShooterProjectile4 = enemyFire4.GetComponent<EnemyShooterProjectile>();
             EnemyShooterProjectile enemyShooterProjectile5 = enemyFire5.GetComponent<EnemyShooterProjectile>();
 
-            enemyShooterProjectile1.Launch(lookDir1, 7f);
-            enemyShooterProjectile2.Launch(lookDir2, 7f);
-            enemyShooterProjectile3.Launch(lookDir3, 7f);
-            enemyShooterProjectile4.Launch(lookDir4, 7f);
-            enemyShooterProjectile5.Launch(lookDir5, 7f);
+            enemyShooterProjectile1.Launch(lookDir1, 5f);
+            enemyShooterProjectile2.Launch(lookDir2, 5f);
+            enemyShooterProjectile3.Launch(lookDir3, 5f);
+            enemyShooterProjectile4.Launch(lookDir4, 5f);
+            enemyShooterProjectile5.Launch(lookDir5, 5f);
         }
         //animator.ResetTrigger("fire");
 

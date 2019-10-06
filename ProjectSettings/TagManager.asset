@@ -30,7 +30,7 @@ TagManager:
   - Credits
   - EnemyLine
   - EnemyLaser
-  - 
+  - PostProcessing
   - 
   - 
   - 
@@ -46,4 +46,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Enemy Projectile
+    uniqueID: 3367057689
+    locked: 0
+  - name: Credit
+    uniqueID: 3647708961
     locked: 0

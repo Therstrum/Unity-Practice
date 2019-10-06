@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
+    path: Assets/Prototype/Scenes/Home Screen.unity
+    guid: 29e68d3ae7c4aa0499587d11dfa64730
+  - enabled: 1
     path: Assets/Prototype/Scenes/Prototype Scene.unity
     guid: bc4ce8021823bef40b2157ce5a51d9bd
   - enabled: 1
@@ -18,12 +21,12 @@ EditorBuildSettings:
     path: Assets/Prototype/Scenes/Level select.unity
     guid: 23c606bcb5a0ea14fb0ead349e777d91
   - enabled: 1
-    path: Assets/Prototype/Scenes/Home Screen.unity
-    guid: 29e68d3ae7c4aa0499587d11dfa64730
-  - enabled: 1
     path: Assets/Prototype/Scenes/GameWin.unity
     guid: 65ef8dc7a378f6f4fa4fb80f054fbc96
   - enabled: 1
     path: Assets/Prototype/Scenes/Lose screen.unity
     guid: 88ea71c3844abfc4c84dc87120aed132
+  - enabled: 1
+    path: Assets/Prototype/Scenes/About Page.unity
+    guid: 6bb3816c5eefe0f4197de62260198e38
   m_configObjects: {}

@@ -9,7 +9,6 @@ public class EnemyFollower : MonoBehaviour
     public Rigidbody2D rb;
     public float enemyHealth;
     static float enemyMaxHealth;
-    static float enemyHealthAdjusted;
     public float enemyCooldownTimer;
     public float enemyCooldownSpeed;
     private float enemyDifficulty = 1;
@@ -19,15 +18,20 @@ public class EnemyFollower : MonoBehaviour
     {
         WaveController.enemiesRemaining++;
         rb = GetComponent<Rigidbody2D>();
-	    enemyMaxHealth = 30f;
-        enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
-        enemyHealth = enemyHealthAdjusted;
+	    enemyMaxHealth = 40f;
+        enemyHealth = enemyMaxHealth;
         enemyCooldownSpeed = 1.5f;
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+
+    void FixedUpdate()
+    {
+
         if (enemyCooldownTimer > 0)
         {
             enemyCooldownTimer -= Time.fixedDeltaTime;
@@ -37,23 +41,19 @@ public class EnemyFollower : MonoBehaviour
                 isMoving = true;
             }
         }
-    }
-
-
-    void FixedUpdate()
-    {
         Vector2 lookDir = (playerController.playerPosition - rb.position).normalized;
         float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg +90f;
         rb.rotation = angle;
         if (isMoving)
         {
-            rb.AddForce((playerController.playerPosition - rb.position).normalized * 20f, ForceMode2D.Impulse);
             isMoving = false;
+            rb.AddForce((playerController.playerPosition - rb.position).normalized * 15f, ForceMode2D.Impulse);
             enemyCooldownTimer = enemyCooldownSpeed;
+            //enemyCooldownTimer = enemyCooldownSpeed;
+
         }
     }
-
-
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "playerWeapon")

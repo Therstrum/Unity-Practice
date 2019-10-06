@@ -7,7 +7,6 @@ public class EnemyLaser : MonoBehaviour
     //health variables
     public float enemyHealth;
     public static float enemyMaxHealth;
-    public static float enemyHealthAdjusted;
 
     //attack variables
     public bool enemyShotCooldown = true;
@@ -50,9 +49,8 @@ public class EnemyLaser : MonoBehaviour
         {
             rb.position = new Vector2(8.2f, 5);
         }
-        enemyMaxHealth = 30f;
-        enemyHealthAdjusted = enemyMaxHealth *= .5f + ((WaveController.difficulty / 10f) * 5f);
-        enemyHealth = enemyHealthAdjusted;
+        enemyMaxHealth = 50f;
+        enemyHealth = enemyMaxHealth;
 
         shotDirection.x = 0;
 
@@ -109,7 +107,12 @@ public class EnemyLaser : MonoBehaviour
             {
                 isStrafing = false;
             }
+            rb.bodyType = RigidbodyType2D.Dynamic;
             rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+        }
+        else if (isShooting)
+        {
+            rb.bodyType = RigidbodyType2D.Kinematic;
         }
     }
 

@@ -69,12 +69,12 @@ public class RandomEventManager : MonoBehaviour
     IEnumerator FullHealEvent()
     {
         GameObject ship = Instantiate(oldShip, spawnOrigin, Quaternion.identity);
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3.5f);
         EventTextLower.text.enabled = true;
         int randomText = Random.Range(0, 100);
         if (randomText >= 0 && randomText <= 33)
         {
-            EventTextLower.text.SetText("Another escape pod from the fleet? May your soul find rest from this torment. There's some useful supplies here for me.");
+            EventTextLower.text.SetText("Another escape pod from the fleet? There's some useful supplies here.");
         }
         else if (randomText >33 && randomText <=66)
         {
@@ -82,18 +82,17 @@ public class RandomEventManager : MonoBehaviour
         }
         else
         {
-            EventTextLower.text.SetText("The losses of the past are stepping stones for the future");
+            EventTextLower.text.SetText("The losses of the past are stepping stones for the future.");
         }
 
         //spawn some health packs
-        int dropChance = Random.Range(2, 6);
+        int dropChance = Random.Range(2, 5);
         for (int i = 0; i < dropChance; i++)
         {
             //pick a random vector close to the origin
             Vector2 randomize = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
             //spawn credits at the location where the enemy died and add some randomness to the location
             Instantiate(hullPoint, randomize, Quaternion.identity);
-            yield return new WaitForSeconds(.2f);
         }
         yield return new WaitForSeconds(3);
         EventTextLower.text.enabled = false;

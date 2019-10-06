@@ -29,15 +29,15 @@ public class ShopScript : MonoBehaviour
     {
         if (PlayerStats.credits >= 50 && PlayerStats.playerShotRate >= .20f)
         {
-            PlayerStats.playerShotRate -= .10f;
+            PlayerStats.playerShotRate -= .05f;
             PlayerStats.credits -= 50;
         }
     }
     public void BuySpeed()
     {
-        if (PlayerStats.credits >= 50)
+        if (PlayerStats.credits >= 50 && PlayerStats.playerSpeed <= 11f)
         {
-            PlayerStats.playerSpeed += 2;
+            PlayerStats.playerSpeed += 1;
             PlayerStats.credits -= 50;
         }
     }

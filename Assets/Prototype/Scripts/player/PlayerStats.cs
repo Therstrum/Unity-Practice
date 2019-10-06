@@ -13,7 +13,7 @@ public class PlayerStats : MonoBehaviour
     public static float lootChance = 1;
     public static int credits = 0;
     public static int levelsCompleted = 0;
-    public static int levelsTotal = 5;
+    public static int levelsTotal;
     public static int totalDifficulty = 0;
     // Start is called before the first frame update
     void Start()

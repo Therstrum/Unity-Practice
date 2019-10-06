@@ -46,4 +46,12 @@ public class LevelSelector : MonoBehaviour
     {
         SceneController.StartGame();
     }
+    public void Quit()
+    {
+        SceneController.QuitGame();
+    }
+    public void AboutPage()
+    {
+        SceneController.AboutPage();
+    }
 }

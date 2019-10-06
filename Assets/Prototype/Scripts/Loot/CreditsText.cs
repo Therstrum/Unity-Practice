@@ -18,6 +18,6 @@ public class CreditsText : MonoBehaviour
     void Update()
     {
         currentCredits = PlayerStats.credits;
-        text.SetText($"Credits: {currentCredits}");
+        text.SetText($"{currentCredits}");
     }
 }

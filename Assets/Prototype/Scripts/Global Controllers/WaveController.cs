@@ -21,7 +21,8 @@ public class WaveController : MonoBehaviour
     public EnemyLaser enemyLaser;
     public GameObject creditLow;
     static GameObject creditDrop;
-    
+    public GameObject hp;
+    static GameObject hpDrop;
 
     //Difficulty Variables
     public static int loot;
@@ -34,14 +35,15 @@ public class WaveController : MonoBehaviour
 
     // Start is called before the first frame update
     void Awake()
-    {       
-
+    {
         PlayerStats.totalDifficulty += difficulty;
+        hpDrop = hp;
         creditDrop = creditLow;
         currentWave = 0;
-        //TO DO: Get the difficulty modifier of the current scene and add it here. Add to maxWave.
-        maxWave = 5;
+        maxWave = 5 + (2*difficulty)-1;
         enemiesRemaining = 0;
+
+        //Set the available types of enemies that can spawn based on levels completed.
     }
 
     // Update is called once per frame
@@ -62,19 +64,16 @@ public class WaveController : MonoBehaviour
             {
                 levelFinished = true;
                 levelEndTimer -= Time.deltaTime;
-                
-                if (PlayerStats.levelsCompleted >= PlayerStats.levelsTotal)
-                {
-                    gameWon = true;
-                }
 
                 if (levelEndTimer <= 0)
                 { 
                     levelFinished = false;
                     levelEndTimer = 5f;
                     PlayerStats.levelsCompleted++;
-                    if (gameWon)
+
+                    if (PlayerStats.levelsCompleted >= PlayerStats.levelsTotal)
                     {
+                        gameWon = true;
                         SceneController.GoToWinScreen();
                     }
                     else
@@ -90,7 +89,7 @@ public class WaveController : MonoBehaviour
     public void NextWave()
     {
         
-        if (currentWave == 3)
+        if (currentWave == maxWave/2)
         {
             currentWave++;
             RandomEventManager.RandomEvent();
@@ -113,9 +112,9 @@ public class WaveController : MonoBehaviour
         //make sure the event only runs once
         if (waveCooldown) 
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(4);
             //Pick a random spawn number modified by difficulty
-            maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + (2 * difficulty)));
+            maxEnemySpawn = Mathf.Floor(Random.Range(1 + (difficulty / 2 + difficulty), 3 + difficulty));
             //for each enemy, choose a random one.
             for (int i = 0; i < maxEnemySpawn; i++)
             {
@@ -147,12 +146,12 @@ public class WaveController : MonoBehaviour
     }
     IEnumerator SecondWaveCycleSpawn()
     {
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(5);
         //set another random range for enemy type
         float spawnType = Random.Range(0, 100f);
         if (spawnType >=0 && spawnType <=50)
         {
-            for (int i = 0; i <= 2*difficulty; i++)
+            for (int i = 0; i <= 1+difficulty; i++)
             {
                 SpawnShooter();
             }
@@ -173,20 +172,66 @@ public class WaveController : MonoBehaviour
             }
             
         }
+        if (PlayerStats.levelsCompleted > 2)
+        {
+            StartCoroutine ("ThirdWaveCycleSpawn");
+        }
+        else
+        {
+            //tell the controller another wave can be spawned when no more enemies are alive
+            waveCooldown = false;
+        }
+    
+    }
+    IEnumerator ThirdWaveCycleSpawn()
+    {
+        yield return new WaitForSeconds(5);
+        //set another random range for enemy type
+        float spawnType = Random.Range(0, 100f);
+        if (spawnType >= 0 && spawnType <= 50)
+        {
+            for (int i = 0; i <= 2 + difficulty; i++)
+            {
+                SpawnShooter();
+            }
+        }
+        else if (spawnType > 50 && spawnType <= 75)
+        {
+            for (int i = 0; i <= difficulty; i++)
+            {
+                SpawnFollower();
+            }
+        }
+        else
+        {
+            for (int i = 0; i < difficulty - 1; i++)
+            {
+                SpawnMulti();
+                SpawnLaser();
+            }
+
+        }
         //tell the controller another wave can be spawned when no more enemies are alive
         waveCooldown = false;
     }
 
+
     public static void DropLoot(float difficultyMod, Vector2 enemyRB)
     {
+        float hpChance = Random.Range(1, 100);
+        if (hpChance >= 88)
+        {
+            Instantiate(hpDrop, (enemyRB), Quaternion.identity);
+            //can add other types of drop here too
+        }
         //Set the amount of loot that drops based on difficuly multipliers
         float lootMulti = (PlayerStats.lootMulti * difficulty * difficultyMod);
-        float lootAmount = Random.Range(1 * lootMulti, 10 * lootMulti);
+        float lootAmount = Random.Range(3 * lootMulti, 8 * Mathf.CeilToInt(lootMulti/2));
         //Roll 1-100 to see if loot drops
         float lootChance = Random.Range(1, 100);
 
         //Check if the roll meets a threshold that lowers based on difficulty;
-        if (lootChance >= (50 - (5 * (difficulty + difficultyMod))))
+        if (lootChance >= 55 - (difficulty*2))
         {
             for (int i = 1; i < lootAmount; i++)
             {
